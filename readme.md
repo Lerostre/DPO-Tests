@@ -15,14 +15,14 @@ Following this experiment, a reward was calculated using `"lvwerra/distilbert-im
 Training an SFT model with the loss from the paper on a dataset built from winner-loser pairs yields the following results:
 
 $$
-\\begin{array}{lllc}
-\\hline \\text{experiment } & \\text{reward} & \\text{diversity } \\\\
-\\hline \\text {default} & \\text{-0.068486} & \\text{5.825884} \\\\
-\\text {hinge} & \\text{ 2.533579} & \\text{4.582645} \\\\
-\\text {sigmoid} & \\text{ 2.538272} & \\text{4.583957} \\\\
-\\text {best} & \\text{ 2.935000} & \\text{4.732000} \\\\
-\\hline
-\\end{array}
+\begin{array}{lllc}
+\hline \text{experiment } & \text{reward} & \text{diversity } \\
+\hline \text {default} & \text{-0.068486} & \text{5.825884} \\
+\text {hinge} & \text{ 2.533579} & \text{4.582645} \\
+\text {sigmoid} & \text{ 2.538272} & \text{4.583957} \\
+\text {best} & \text{ 2.935000} & \text{4.732000} \\
+\hline
+\end{array}
 $$
 
 The reward of the generated texts increased compared to the original SFT policy. Diversity decreased, which is expected since the generation is constrained to positive reviews. Comparing the losses (`hinge` and `sigmoid`) shows that their values are close with no significant difference.
@@ -37,15 +37,15 @@ The final plot is shown below. `DPOTrainer` functions correctly, and the reviews
 The generalized loss, where \(f'\) is the derivative of an arbitrary divergence, corresponds to the reverse KL divergence in `DPOTrainer`. The code relies on a table of pre-calculated derivatives:
 
 $$
-\\begin{array}{lllc}
-\\hline f \\text {-divergence } & \\boldsymbol{f}(\\boldsymbol{u}) & \\boldsymbol{f}^{\\prime}(\\boldsymbol{u}) \\\\
-\\hline \\alpha \\text {-divergence }(\\alpha \\in(0,1)) & \\left(u^{1-\\alpha}-(1-\\alpha) u-\\alpha\\right) /(\\alpha(\\alpha-1)) & \\left(1-u^{-\\alpha}\\right) / \\alpha\\\\
-\\text { Reverse KL }(\\alpha=0) & u \\log u & \\log u+1\\\\
-\\text { Forward KL }(\\alpha=1) & -\\log u & -1 / u\\\\
-\\text { JS-divergence } & u \\log u-(u+1) \\log ((u+1) / 2) & \\log (2 u /(1+u))\\\\
-\\hline
-\\end{array}
-$$]
+\begin{array}{lllc}
+\hline f \text {-divergence } & \boldsymbol{f}(\boldsymbol{u}) & \boldsymbol{f}^{\prime}(\boldsymbol{u}) \\
+\hline \alpha \text {-divergence }(\alpha \in(0,1)) & \left(u^{1-\alpha}-(1-\alpha) u-\alpha\right) /(\alpha(\alpha-1)) & \left(1-u^{-\alpha}\right) / \alpha\\
+\text { Reverse KL }(\alpha=0) & u \log u & \log u+1\\
+\text { Forward KL }(\alpha=1) & -\log u & -1 / u\\
+\text { JS-divergence } & u \log u-(u+1) \log ((u+1) / 2) & \log (2 u /(1+u))\\
+\hline
+\end{array}
+$$
 
 The `utils.py` file contains loss functions derived from other divergence functions:
 - `RKL_divergence`
@@ -72,19 +72,19 @@ The overall trend aligns with the paper. \(\text{KL}\) generates diverse texts, 
 The main objective was testing other divergence functions to evaluate their impact on model behavior. \(\text{Total Variation}\) and \(\text{Chi-squared}\) were introduced in the paper but not analyzed in depth.
 
 $$
-\\begin{array}{lllc}
-\\hline f \\text {-divergence } & \\boldsymbol{f}(\\boldsymbol{u}) & \\boldsymbol{f}^{\\prime}(\\boldsymbol{u}) \\\\
-\\hline
-\\text { Pearson } \\chi^2 & (u-1)^2 & 2(u-1)\\\\
-\\text { Neyman } \\chi^2 & (1-u)^2 / u & 1 - \\frac{1}{u^2}\\\\
-\\text { CNP } \\chi^2 & \\frac{1}{3} \\left(2\\chi^2_{\\text{Pearson}} + \\chi^2_{\\text{Neyman}} \\right) & \\frac{1}{3} \\left( 4u - 3 - \\frac{1}{u^2}\\right)\\\\
-\\text { Hellinger } & (\\sqrt{u}-1)^2 & 1 - \\frac{1}{\\sqrt{u}}\\\\
-\\text { Jeffrey } & (u-1)\\log{u} & \\log u + 1 - \\frac{1}{u}\\\\
-\\text { GAN } & u\\log{u} - (u+1)\\log(u+1) & \\log u - \\log(u+1)\\\\
-\\text { Total Variation } & \\frac{1}{2}|u-1| & u>1 ? \\frac{1}{2}:-\\frac{1}{2}\\\\
-\\chi^{\\alpha} \\ \\text {distance} \\ (\\alpha > 1) & \\frac{1}{2}|u-1|^{\\alpha} & u>1 ? \\frac{\\alpha(u-1)^{\\alpha-1}}{2}:-\\frac{\\alpha(1-u)^{\\alpha-1}}{2}\\\\
-\\hline
-\\end{array}
+\begin{array}{lllc}
+\hline f \text {-divergence } & \boldsymbol{f}(\boldsymbol{u}) & \boldsymbol{f}^{\prime}(\boldsymbol{u}) \\
+\hline
+\text { Pearson } \chi^2 & (u-1)^2 & 2(u-1)\\
+\text { Neyman } \chi^2 & (1-u)^2 / u & 1 - \frac{1}{u^2}\\
+\text { CNP }  \chi^2 & \frac{1}{3} \left(2\chi^2_{\text{Pearson}} + \chi^2_{\text{Neyman}} \right) & \frac{1}{3} \left( 4u - 3 - \frac{1}{u^2}\right)\\
+\text { Hellinger } & (\sqrt{u}-1)^2 & 1 - \frac{1}{\sqrt{u}}\\
+\text { Jeffrey } & (u-1)\log{u} &  \log u + 1 - \frac{1}{u}\\
+\text { GAN } & u\log{u} - (u+1)\log(u+1) & \log u - \log(u+1)\\
+\text { Total Variation } & \frac{1}{2}|u-1| & u>1 ? \frac{1}{2}:-\frac{1}{2}\\
+\chi^{\alpha} \ \text {distance} \ (\alpha > 1) & \frac{1}{2}|u-1|^{\alpha} & u>1 ? \frac{\alpha(u-1)^{\alpha-1}}{2}:-\frac{\alpha(1-u)^{\alpha-1}}{2}\\
+\hline
+\end{array}
 $$
 
 Predicting the optimal divergence function is difficult due to their complex properties; this phase is exploratory.
